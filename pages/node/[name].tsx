@@ -1,29 +1,49 @@
 import { useQuery } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import styled from "styled-components";
+import NodeInfo from "../../components/NodeInfo";
 
-type TopicData = { name: string; type: string };
+export type TopicData = { name: string; type: string };
 
-export default function Home({ name }: { name: string }) {
+const PageContainer = styled.div`
+  padding: 16px;
+  display: flex;
+  min-height: 100vh;
+`;
+
+const InfoSelectors = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+export default function Topic({ name }: { name: string }) {
   const { isLoading, data } = useQuery<{
-    publications: TopicData[];
-    services: { name: string }[];
-    subscriptions: TopicData[];
+    publication: TopicData[];
+    services: { name: string; type: undefined }[];
+    subscription: TopicData[];
   }>({
     queryKey: ["node_info/" + name],
     queryFn: () =>
       fetch("http://localhost:5000/node/" + name).then((res) => res.json()),
   });
 
-  if (isLoading) {
+  if (isLoading || !data) {
     return <div>Loading...</div>;
   }
   console.log(data);
-  return <div></div>;
+  return (
+    <PageContainer>
+      <InfoSelectors>
+        <NodeInfo type="publication" info={data.publication} />
+        <NodeInfo type="service" info={data.services} />
+        <NodeInfo type="subscription" info={data.subscription} />
+      </InfoSelectors>
+    </PageContainer>
+  );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  console.log(context.params);
-
   return {
     props: { name: context.params?.name }, // will be passed to the page component as props
   };

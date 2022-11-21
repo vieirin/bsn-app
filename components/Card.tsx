@@ -9,8 +9,8 @@ const CardName = styled.p`
 const CardComponent = styled.div`
   flex-grow: 1;
 
-  background-color: #f6f8fb;
-  border-radius: 10px;
+  background-color: ${(props) => props.theme.colors.negativeBackground};
+  border-radius: ${(props) => props.theme.borderRadius};
 
   width: 150px;
   margin: 8px;

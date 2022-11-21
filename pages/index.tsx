@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { HomePage, RosNode } from "../components/Homepage/Homepage";
+import { Card } from "../components/Card";
+import Container from "../components/Container";
+
+type RosNode = { name: string; uri: string };
 
 export default function Home() {
   const { isLoading, data } = useQuery<{ nodes: RosNode[] } | undefined>({
@@ -12,5 +15,11 @@ export default function Home() {
     return <div>Loading...</div>;
   }
 
-  return <HomePage nodes={data.nodes} />;
+  return (
+    <Container>
+      {data.nodes.map(({ name }, i) => (
+        <Card key={`node-${name}-${i}`} name={name} />
+      ))}
+    </Container>
+  );
 }
